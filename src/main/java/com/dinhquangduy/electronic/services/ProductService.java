@@ -1,5 +1,7 @@
 package com.dinhquangduy.electronic.services;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.dinhquangduy.electronic.bean.ResultBean;
 
 /**
@@ -49,7 +51,7 @@ public interface ProductService {
      * @return the result bean
      * @throws Exception the exception
      */
-    public ResultBean addProduct(String json) throws Exception;
+    public ResultBean addProduct(String json, MultipartFile[] files) throws Exception;
 
     /**
      * Update product.
@@ -58,5 +60,5 @@ public interface ProductService {
      * @return the result bean
      * @throws Exception the exception
      */
-    public ResultBean updateProduct(String json) throws Exception;
+    public ResultBean updateProduct(String json, MultipartFile[] files) throws Exception;
 }

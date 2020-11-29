@@ -2,10 +2,6 @@ package com.dinhquangduy.electronic.bean.response;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class ProductCategoryResponse extends CommonResponse implements Serializable{
 
     /**
@@ -13,33 +9,21 @@ public class ProductCategoryResponse extends CommonResponse implements Serializa
      */
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "id")
-    @JsonProperty("id")
     private Integer id;
 
     /** The name. */
-    @Column(name = "name")
-    @JsonProperty("name")
     private String name;
 
     /** The alias. */
-    @Column(name = "alias")
-    @JsonProperty("alias")
     private String alias;
 
     /** The image. */
-    @Column(name = "image")
-    @JsonProperty("image")
-    private String image;
+    private String images;
 
     /** The description. */
-    @Column(name = "description")
-    @JsonProperty("description")
     private String description;
 
     /** The status. */
-    @Column(name = "status")
-    @JsonProperty("status")
     private Boolean status;
 
     public ProductCategoryResponse() {
@@ -50,7 +34,7 @@ public class ProductCategoryResponse extends CommonResponse implements Serializa
         this.id = id;
         this.name = name;
         this.alias = alias;
-        this.image = image;
+        this.images = image;
         this.description = description;
         this.status = status;
     }
@@ -79,12 +63,12 @@ public class ProductCategoryResponse extends CommonResponse implements Serializa
         this.alias = alias;
     }
 
-    public String getImage() {
-        return image;
+    public String getImages() {
+        return images;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImage(String images) {
+        this.images = images;
     }
 
     public String getDescription() {

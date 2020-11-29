@@ -9,11 +9,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 @Entity
 @Table(name = "product_categories")
-public class ProductCategory extends CommonEntity implements Serializable {
+public class ProductCategoryEntity extends CommonEntity implements Serializable {
 
     /**
      * 
@@ -23,32 +21,26 @@ public class ProductCategory extends CommonEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @JsonProperty("id")
     private Integer id;
 
     /** The name. */
     @Column(name = "name")
-    @JsonProperty("name")
     private String name;
 
     /** The alias. */
     @Column(name = "alias")
-    @JsonProperty("alias")
     private String alias;
 
     /** The image. */
-    @Column(name = "image")
-    @JsonProperty("image")
-    private String image;
+    @Column(name = "images")
+    private String images;
 
     /** The description. */
     @Column(name = "description")
-    @JsonProperty("description")
     private String description;
 
     /** The status. */
     @Column(name = "status")
-    @JsonProperty("status")
     private Boolean status;
 
     public Integer getId() {
@@ -75,12 +67,12 @@ public class ProductCategory extends CommonEntity implements Serializable {
         this.alias = alias;
     }
 
-    public String getImage() {
-        return image;
+    public String getImages() {
+        return images;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImages(String images) {
+        this.images = images;
     }
 
     public String getDescription() {

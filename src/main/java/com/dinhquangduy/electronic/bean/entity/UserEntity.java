@@ -21,19 +21,15 @@ public class UserEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @JsonProperty("id")
     private Integer id;
 
     @Column(name = "fullname")
-    @JsonProperty("fullname")
     private String fullname;
 
     @Column(name = "address")
-    @JsonProperty("address")
     private String address;
 
     @Column(name = "birthday")
-    @JsonProperty("birthday")
     private Date birthday;
 
     @Column(name = "email")
@@ -41,19 +37,15 @@ public class UserEntity implements Serializable {
     private String email;
 
     @Column(name = "phone_number")
-    @JsonProperty("phone_number")
     private String phoneNumber;
 
     @Column(name = "user_name")
-    @JsonProperty("user_name")
     private String userName;
 
     @Column(name = "password")
-    @JsonProperty("password")
     private String password;
 
     @Column(name = "id_role")
-    @JsonProperty("id_role")
     private Integer idRole;
 
     public Integer getId() {

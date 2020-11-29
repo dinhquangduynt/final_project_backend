@@ -28,8 +28,8 @@ public class ProductResponse extends CommonResponse implements Serializable {
     private Integer categoryId;
     
     /** The image. */
-    @JsonProperty("image")
-    private String image;
+    @JsonProperty("images")
+    private String images;
     
     /** The price. */
     @JsonProperty("price")
@@ -83,7 +83,7 @@ public class ProductResponse extends CommonResponse implements Serializable {
         this.name = name;
         this.alias = alias;
         this.categoryId = categoryId;
-        this.image = image;
+        this.images = image;
         this.price = price;
         this.warranty = warranty;
         this.description = description;
@@ -130,12 +130,12 @@ public class ProductResponse extends CommonResponse implements Serializable {
         this.categoryId = categoryId;
     }
 
-    public String getImage() {
-        return image;
+    public String getImages() {
+        return images;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImages(String images) {
+        this.images = images;
     }
 
     public BigDecimal getPrice() {

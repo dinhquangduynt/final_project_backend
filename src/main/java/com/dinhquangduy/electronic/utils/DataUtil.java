@@ -1,5 +1,7 @@
 package com.dinhquangduy.electronic.utils;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -27,5 +29,10 @@ public class DataUtil {
     
     public static boolean isJsonObjectHasKey(JsonObject json, String key) {
         return json.has(key);
+    }
+    
+    public static String encrytePassword(String password) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.encode(password);
     }
 }

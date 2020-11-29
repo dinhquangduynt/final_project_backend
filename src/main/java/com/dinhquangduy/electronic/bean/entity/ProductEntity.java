@@ -10,8 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 @Entity
 @Table(name = "products")
 public class ProductEntity extends CommonEntity implements Serializable{
@@ -23,78 +21,63 @@ public class ProductEntity extends CommonEntity implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @JsonProperty("id")
     private Integer id;
     
     /** The name. */
     @Column(name = "name")
-    @JsonProperty("name")
     private String name;
     
     /** The alias. */
     @Column(name = "alias")
-    @JsonProperty("alias")
     private String alias;
     
     /** The category id. */
     @Column(name = "category_id")
-    @JsonProperty("category_id")
     private Integer categoryId;
     
     /** The image. */
-    @Column(name = "image")
-    @JsonProperty("image")
-    private String image;
+    @Column(name = "images")
+    private String images;
     
     /** The price. */
     @Column(name = "price")
-    @JsonProperty("price")
     private BigDecimal price = new BigDecimal(0);
     
     
     /** The warranty. */
     @Column(name = "warranty")
-    @JsonProperty("warranty")
     private Integer warranty;
     
     /** The description. */
     @Column(name = "description")
-    @JsonProperty("description")
     private String description;
     
     /** The content. */
     @Column(name = "content")
-    @JsonProperty("content")
     private String content;
     
     /** The hot flg. */
     @Column(name = "hoFlg")
-    @JsonProperty("hot_flg")
     private Boolean hotFlg;
     
     /** The home flg. */
     @Column(name = "homeFlg")
-    @JsonProperty("home_flg")
     private Boolean homeFlg;
     
     /** The quantity. */
     @Column(name = "quantity")
-    @JsonProperty("quantity")
     private Integer quantity ;
     
     /** The status. */
     @Column(name = "status")
-    @JsonProperty("status")
     private Boolean status;
     
     /** The view count. */
     @Column(name = "view_count")
-    @JsonProperty("view_count")
-    private Integer viewCount ;
+    private Integer viewCount = 0 ;
     
     /** The rating. */
     @Column(name = "rating")
-    @JsonProperty("rating")
     private Float rating ;
 
     /**
@@ -174,8 +157,8 @@ public class ProductEntity extends CommonEntity implements Serializable{
      *
      * @return the image
      */
-    public String getImage() {
-        return image;
+    public String getImages() {
+        return images;
     }
 
     /**
@@ -183,8 +166,8 @@ public class ProductEntity extends CommonEntity implements Serializable{
      *
      * @param image the new image
      */
-    public void setImage(String image) {
-        this.image = image;
+    public void setImages(String images) {
+        this.images = images;
     }
 
     /**

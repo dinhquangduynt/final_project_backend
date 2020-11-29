@@ -1,5 +1,6 @@
 package com.dinhquangduy.electronic.services.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,18 +9,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dinhquangduy.electronic.bean.ResultBean;
 import com.dinhquangduy.electronic.bean.entity.ProductEntity;
 import com.dinhquangduy.electronic.bean.response.ProductResponse;
 import com.dinhquangduy.electronic.config.LogExecutionTime;
 import com.dinhquangduy.electronic.dao.ProductDao;
+import com.dinhquangduy.electronic.services.ImageStorageService;
 import com.dinhquangduy.electronic.services.ProductService;
 import com.dinhquangduy.electronic.utils.Constants;
-import com.google.gson.Gson;
+import com.dinhquangduy.electronic.utils.DataUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ProductServiceImpl.
  */
@@ -30,11 +33,19 @@ public class ProductServiceImpl implements ProductService{
     /** The Constant log. */
     private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
     
-    static ModelMapper modelMapper = new ModelMapper();
+    /** The model mapper. */
+    private ModelMapper modelMapper = new ModelMapper();
+    
+    /** The mapper. */
+    private ObjectMapper mapper = new ObjectMapper();
 
     /** The product dao. */
     @Autowired
     private ProductDao productDao;
+    
+    /** The image storage service. */
+    @Autowired
+    private ImageStorageService imageStorageService;
     
     /**
      * Gets the all.
@@ -87,10 +98,12 @@ public class ProductServiceImpl implements ProductService{
         log.info("##                                      ##");
         log.info("##########################################");
         log.info("### Start Get List Product By Id ###");
-        ProductEntity products = productDao.findById(id).get();
+        ProductEntity product = productDao.findById(id).get();
+        product.setViewCount(product.getViewCount() + 1);
+        productDao.save(product);
         log.info("### End Get List Product By Id ###");
         log.info("##########################################");
-        return new ResultBean(products, Constants.STATUS_OK, Constants.MSG_OK);
+        return new ResultBean(product, Constants.STATUS_OK, Constants.MSG_OK);
     }
 
     /**
@@ -111,58 +124,69 @@ public class ProductServiceImpl implements ProductService{
         return new ResultBean(Constants.STATUS_OK, Constants.MSG_OK);
     }
 
+    /**
+     * Adds the product.
+     *
+     * @param json the json
+     * @param files the files
+     * @return the result bean
+     * @throws Exception the exception
+     */
     @Override
-    public ResultBean addProduct(String json) throws Exception {
+    public ResultBean addProduct(String json,  MultipartFile[] files) throws Exception {
         log.info("##                                      ##");
         log.info("##########################################");
-        log.info("### Start Delete Product By Id ###");
-        JsonObject jsonObject = new Gson().fromJson(json, JsonObject.class);
-        ProductEntity productEntity = new ProductEntity();
-        setProductEntity(jsonObject, productEntity);
+        log.info("### Start Add Product By Id ###");
+        List<String> filesName = new ArrayList<String>();
+        try {
+            for (MultipartFile file : files) {
+                String fileName = imageStorageService.save(file);
+                filesName.add(fileName);
+            }
+        } catch (Exception e) {
+            throw new IOException("Save file fail!" );
+        }
+        ProductEntity productEntity = updateEntity(json);
+        productEntity.setImages(String.join(",", filesName));
         productDao.save(productEntity);
-        log.info("### End Delete Product By Id ###");
+        log.info("### End Add Product By Id ###");
         log.info("##########################################");
         return new ResultBean(Constants.STATUS_201, Constants.MSG_OK);
     }
     
+    /**
+     * Update product.
+     *
+     * @param json the json
+     * @return the result bean
+     * @throws Exception the exception
+     */
     @Override
-    public ResultBean updateProduct(String json) throws Exception {
+    public ResultBean updateProduct(String json, MultipartFile[] files) throws Exception {
         log.info("##                                      ##");
         log.info("##########################################");
-        log.info("### Start Delete Product By Id ###");
-        JsonObject jsonObject = new Gson().fromJson(json, JsonObject.class);
-        ProductEntity productEntity = new ProductEntity();
-        setProductEntity(jsonObject, productEntity);
-        if(!productDao.existsById(productEntity.getId())) {
-            throw new Exception("Product Id " + productEntity.getId() + " does not exist!");
+        log.info("### Start Update Product By Id ###");
+        JsonObject jsonObj = DataUtil.getJsonObject(json);
+        Integer id = jsonObj.get("id").getAsInt();
+        if(!productDao.existsById(id)) {
+            throw new Exception("Product Id " + id + " does not exist!");
         }
+        ProductEntity productEntity = updateEntity(json);
         productDao.save(productEntity);
-        log.info("### End Delete Product By Id ###");
+        log.info("### End Update Product By Id ###");
         log.info("##########################################");
         return new ResultBean(Constants.STATUS_OK, Constants.MSG_OK);
     }
     
-    private void setProductEntity(JsonObject json, ProductEntity entity) throws Exception {
-        if(json.has("name")) {
-            entity.setName(json.get("name").getAsString());
-        }
-        
-        if(json.has("alias")) {
-            entity.setAlias(json.get("alias").getAsString());
-        }
-        
-        if(json.has("category_id")) {
-            entity.setCategoryId(json.get("category_id").getAsInt());
-        }
-        if(json.has("price")) {
-            entity.setPrice(json.get("price").getAsBigDecimal());
-        }
-        if(json.has("warranty")) {
-            entity.setWarranty(json.get("warranty").getAsInt());
-        }
-        if(json.has("warranty")) {
-            entity.setWarranty(json.get("warranty").getAsInt());
-        }
+    /**
+     * Update entity.
+     *
+     * @param json the json
+     * @return the product entity
+     * @throws Exception the exception
+     */
+    private ProductEntity updateEntity(String json) throws Exception{
+        ProductResponse productResponse = mapper.readValue(json, ProductResponse.class);
+        return modelMapper.map(productResponse, ProductEntity.class);
     }
-
 }

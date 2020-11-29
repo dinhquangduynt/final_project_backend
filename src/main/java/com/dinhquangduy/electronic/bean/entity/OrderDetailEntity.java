@@ -10,8 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 @Entity
 @Table(name = "order_details")
 public class OrderDetailEntity extends CommonEntity implements Serializable {
@@ -24,24 +22,23 @@ public class OrderDetailEntity extends CommonEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @JsonProperty("id")
     private Integer id;
     
     @Column(name = "order_id")
-    @JsonProperty("order_id")
     private Integer orderId;
     
     @Column(name = "product_id")
-    @JsonProperty("product_id")
     private Integer productId;
     
     @Column(name = "quantity")
-    @JsonProperty("quantity")
     private Integer quantity;
     
     @Column(name = "price_per_item")
-    @JsonProperty("price_per_item")
     private BigDecimal pricePerItem;
+    
+    @Column(name = "total_price")
+    private BigDecimal totalPrice;
+
 
     public Integer getId() {
         return id;
@@ -82,4 +79,13 @@ public class OrderDetailEntity extends CommonEntity implements Serializable {
     public void setPricePerItem(BigDecimal pricePerItem) {
         this.pricePerItem = pricePerItem;
     }
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+    
 }
