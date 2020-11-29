@@ -65,7 +65,7 @@ public class ProductServiceImpl implements ProductService{
             response.add(productResponse);
         });
         log.info("### End Get List Products ###");
-        return new ResultBean(response, Constants.STATUS_OK, Constants.MSG_OK);
+        return new ResultBean(products, Constants.STATUS_OK, Constants.MSG_OK);
     }
 
     /**
@@ -146,9 +146,9 @@ public class ProductServiceImpl implements ProductService{
         } catch (Exception e) {
             throw new IOException("Save file fail!" );
         }
-        ProductEntity productEntity = updateEntity(json);
-        productEntity.setImages(String.join(",", filesName));
-        productDao.save(productEntity);
+       ProductEntity productEntity = updateEntity(json);
+       productEntity.setImages(String.join(",", filesName));
+       ProductEntity p = productDao.save(productEntity);
         log.info("### End Add Product By Id ###");
         log.info("##########################################");
         return new ResultBean(Constants.STATUS_201, Constants.MSG_OK);
@@ -186,7 +186,6 @@ public class ProductServiceImpl implements ProductService{
      * @throws Exception the exception
      */
     private ProductEntity updateEntity(String json) throws Exception{
-        ProductResponse productResponse = mapper.readValue(json, ProductResponse.class);
-        return modelMapper.map(productResponse, ProductEntity.class);
+        return mapper.readValue(json, ProductEntity.class);
     }
 }

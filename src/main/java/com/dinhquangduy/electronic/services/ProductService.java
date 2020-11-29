@@ -3,6 +3,7 @@ package com.dinhquangduy.electronic.services;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dinhquangduy.electronic.bean.ResultBean;
+import com.dinhquangduy.electronic.bean.entity.ProductEntity;
 
 /**
  * The Interface ProductService.

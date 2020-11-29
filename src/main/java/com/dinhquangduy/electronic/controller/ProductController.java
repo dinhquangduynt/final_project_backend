@@ -1,6 +1,9 @@
 package com.dinhquangduy.electronic.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -9,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dinhquangduy.electronic.bean.ResultBean;
+import com.dinhquangduy.electronic.bean.entity.ProductEntity;
 import com.dinhquangduy.electronic.config.LogExecutionTime;
 import com.dinhquangduy.electronic.services.ProductService;
 import com.dinhquangduy.electronic.utils.Constants;
@@ -24,9 +29,13 @@ import com.dinhquangduy.electronic.utils.Constants;
 @RequestMapping(value = "/api/product")
 public class ProductController {
 
+    private static final Logger log = LoggerFactory.getLogger(ProductController.class);
     /** The product service. */
     @Autowired
     private ProductService productService;
+    
+    @Autowired
+    private RestTemplate restTemplate;
 
     /**
      * Gets the all products.
@@ -38,8 +47,11 @@ public class ProductController {
     public ResponseEntity<ResultBean> getAllProducts() throws Exception {
         ResultBean resultBean = null;
         try {
+            HttpEntity<ProductEntity> requestBody = new HttpEntity<>(null);
+            this.restTemplate.postForObject("http://localhost:5000/data", requestBody, ProductEntity.class);
             resultBean = productService.getAll();
         } catch (Exception e) {
+            log.info(e.getMessage());
             resultBean = new ResultBean(Constants.STATUS_BAD_REQUEST, e.getMessage());
             return new ResponseEntity<ResultBean>(resultBean, HttpStatus.BAD_REQUEST);
         }
@@ -59,6 +71,7 @@ public class ProductController {
         try {
             resultBean = productService.getById(id);
         } catch (Exception e) {
+            log.info(e.getMessage());
             resultBean = new ResultBean(Constants.STATUS_BAD_REQUEST, e.getMessage());
             return new ResponseEntity<ResultBean>(resultBean, HttpStatus.BAD_REQUEST);
         }
@@ -79,6 +92,7 @@ public class ProductController {
         try {
             resultBean = productService.getProductsByCateId(cateId);
         } catch (Exception e) {
+            log.info(e.getMessage());
             resultBean = new ResultBean(Constants.STATUS_BAD_REQUEST, e.getMessage());
             return new ResponseEntity<ResultBean>(resultBean, HttpStatus.BAD_REQUEST);
         }
@@ -99,6 +113,7 @@ public class ProductController {
         try {
             resultBean = productService.deleteById(id);
         } catch (Exception e) {
+            log.info(e.getMessage());
             resultBean = new ResultBean(Constants.STATUS_BAD_REQUEST, e.getMessage());
             return new ResponseEntity<ResultBean>(resultBean, HttpStatus.BAD_REQUEST);
         }
@@ -114,16 +129,17 @@ public class ProductController {
      * @throws Exception the exception
      */
     @RequestMapping(value = "/add", method = RequestMethod.POST, produces = { MediaType.APPLICATION_JSON_VALUE })
-    public ResponseEntity<ResultBean> addProduct(@RequestParam("files") MultipartFile[] files,@RequestParam("json") String json) throws Exception {
+    public ResponseEntity<ResultBean> addProduct(@RequestParam("files") MultipartFile[] files, @RequestParam("json") String json) throws Exception {
         ResultBean resultBean = null;
         try {
             resultBean = productService.addProduct(json, files);
         } catch (Exception e) {
+            log.info(e.getMessage());
             resultBean = new ResultBean(Constants.STATUS_BAD_REQUEST, e.getMessage());
             return new ResponseEntity<ResultBean>(resultBean, HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<ResultBean>(resultBean, HttpStatus.OK);
+        return new ResponseEntity<ResultBean>(resultBean, HttpStatus.CREATED);
     }
 
     /**
@@ -133,12 +149,13 @@ public class ProductController {
      * @return the response entity
      * @throws Exception the exception
      */
-    @RequestMapping(value = "/update", method = RequestMethod.POST, produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = "/update", method = RequestMethod.PUT, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<ResultBean> update(@RequestParam("files") MultipartFile[] files, @RequestParam("json") String json) throws Exception {
         ResultBean resultBean = null;
         try {
             resultBean = productService.updateProduct(json, files);
         } catch (Exception e) {
+            log.info(e.getMessage());
             resultBean = new ResultBean(Constants.STATUS_BAD_REQUEST, e.getMessage());
             return new ResponseEntity<ResultBean>(resultBean, HttpStatus.BAD_REQUEST);
         }
