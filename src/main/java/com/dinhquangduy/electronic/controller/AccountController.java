@@ -5,7 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,16 +18,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.dinhquangduy.electronic.bean.ResultBean;
 import com.dinhquangduy.electronic.bean.entity.UserEntity;
+import com.dinhquangduy.electronic.bean.response.AuthenTokenResponse;
+import com.dinhquangduy.electronic.config.JwtTokenProvider;
 import com.dinhquangduy.electronic.services.UserService;
 import com.dinhquangduy.electronic.utils.Constants;
 
 @Controller
 @RequestMapping("/api/account")
 public class AccountController {
+    @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtTokenProvider tokenProvider;
     @Autowired
     private UserService userService;
-    
+
     @RequestMapping(value = "/getAll", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<ResultBean> getAllUsers() throws Exception {
         ResultBean resultBean = null;
@@ -36,7 +47,7 @@ public class AccountController {
     }
 
     @RequestMapping(value = "/getUserById/{id}", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
-    public ResponseEntity<ResultBean> getUserById(@RequestParam Integer id) throws Exception {
+    public ResponseEntity<ResultBean> getUserById(@PathVariable Integer id) throws Exception {
         ResultBean resultBean = null;
         try {
             resultBean = userService.getUserById(id);
@@ -46,9 +57,21 @@ public class AccountController {
         }
         return new ResponseEntity<ResultBean>(resultBean, HttpStatus.OK);
     }
-    
+
+    @RequestMapping(value = "/getUserByUsername", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<ResultBean> getUserById(@RequestParam String username) throws Exception {
+        ResultBean resultBean = null;
+        try {
+            resultBean = userService.getUserByUsername(username);
+        } catch (Exception e) {
+            resultBean = new ResultBean(Constants.STATUS_BAD_REQUEST, e.getMessage());
+            return new ResponseEntity<ResultBean>(resultBean, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<ResultBean>(resultBean, HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE, produces = { MediaType.APPLICATION_JSON_VALUE })
-    public ResponseEntity<ResultBean> deleteUserById(@RequestParam Integer id) throws Exception {
+    public ResponseEntity<ResultBean> deleteUserById(@PathVariable Integer id) throws Exception {
         ResultBean resultBean = null;
         try {
             resultBean = userService.deleteUserbyId(id);
@@ -58,7 +81,7 @@ public class AccountController {
         }
         return new ResponseEntity<ResultBean>(resultBean, HttpStatus.OK);
     }
-    
+
     @RequestMapping(value = "/update", method = RequestMethod.PUT, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<ResultBean> updateUser(@RequestBody UserEntity user) throws Exception {
         ResultBean resultBean = null;
@@ -70,11 +93,12 @@ public class AccountController {
         }
         return new ResponseEntity<ResultBean>(resultBean, HttpStatus.OK);
     }
-    
+
     @RequestMapping(value = "/register", method = RequestMethod.POST, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<ResultBean> addUser(@RequestBody UserEntity user) throws Exception {
         ResultBean resultBean = null;
         try {
+
             resultBean = userService.addUser(user);
         } catch (Exception e) {
             resultBean = new ResultBean(Constants.STATUS_BAD_REQUEST, e.getMessage());
@@ -82,16 +106,24 @@ public class AccountController {
         }
         return new ResponseEntity<ResultBean>(resultBean, HttpStatus.OK);
     }
-    
+
     @RequestMapping(value = "/login", method = RequestMethod.POST, produces = { MediaType.APPLICATION_JSON_VALUE })
-    public ResponseEntity<ResultBean> login(String userName, String password) throws Exception {
-        ResultBean resultBean = null;
-        try {
-            
-        } catch (Exception e) {
-            resultBean = new ResultBean(Constants.STATUS_BAD_REQUEST, e.getMessage());
-            return new ResponseEntity<ResultBean>(resultBean, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> login(@RequestParam String userName, @RequestParam String password) throws Exception {
+        String jwt = null;
+        if (userService.isExitsUserName(userName)) {
+            System.out.println("aaaa");
+            try {
+                Authentication authentication = authenticationManager
+                        .authenticate(new UsernamePasswordAuthenticationToken(userName, password));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                if (authentication != null) {
+                    jwt = tokenProvider.generateToken(authentication);
+                }
+
+            } catch (Exception e) {
+                throw new Exception(e.getCause());
+            }
         }
-        return new ResponseEntity<ResultBean>(resultBean, HttpStatus.OK);
+        return ResponseEntity.ok(new AuthenTokenResponse(jwt));
     }
 }

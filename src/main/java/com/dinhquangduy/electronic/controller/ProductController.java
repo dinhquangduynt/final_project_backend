@@ -7,6 +7,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,8 +35,6 @@ public class ProductController {
     @Autowired
     private ProductService productService;
     
-    @Autowired
-    private RestTemplate restTemplate;
 
     /**
      * Gets the all products.
@@ -43,12 +42,11 @@ public class ProductController {
      * @return the all products
      * @throws Exception the exception
      */
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/getAll", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<ResultBean> getAllProducts() throws Exception {
         ResultBean resultBean = null;
         try {
-            HttpEntity<ProductEntity> requestBody = new HttpEntity<>(null);
-            this.restTemplate.postForObject("http://localhost:5000/data", requestBody, ProductEntity.class);
             resultBean = productService.getAll();
         } catch (Exception e) {
             log.info(e.getMessage());

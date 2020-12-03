@@ -3,6 +3,8 @@ package com.dinhquangduy.electronic.services.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -28,25 +30,25 @@ import com.google.gson.JsonObject;
  */
 @Service
 @LogExecutionTime
-public class ProductServiceImpl implements ProductService{
-    
+public class ProductServiceImpl implements ProductService {
+
     /** The Constant log. */
     private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
-    
+
     /** The model mapper. */
     private ModelMapper modelMapper = new ModelMapper();
-    
+
     /** The mapper. */
     private ObjectMapper mapper = new ObjectMapper();
 
     /** The product dao. */
     @Autowired
     private ProductDao productDao;
-    
+
     /** The image storage service. */
     @Autowired
     private ImageStorageService imageStorageService;
-    
+
     /**
      * Gets the all.
      *
@@ -61,7 +63,7 @@ public class ProductServiceImpl implements ProductService{
         List<ProductEntity> products = productDao.findAll();
         List<ProductResponse> response = new ArrayList<ProductResponse>();
         products.forEach(product -> {
-            ProductResponse productResponse =  modelMapper.map(product, ProductResponse.class);
+            ProductResponse productResponse = modelMapper.map(product, ProductResponse.class);
             response.add(productResponse);
         });
         log.info("### End Get List Products ###");
@@ -133,7 +135,7 @@ public class ProductServiceImpl implements ProductService{
      * @throws Exception the exception
      */
     @Override
-    public ResultBean addProduct(String json,  MultipartFile[] files) throws Exception {
+    public ResultBean addProduct(String json, MultipartFile[] files) throws Exception {
         log.info("##                                      ##");
         log.info("##########################################");
         log.info("### Start Add Product By Id ###");
@@ -144,16 +146,16 @@ public class ProductServiceImpl implements ProductService{
                 filesName.add(fileName);
             }
         } catch (Exception e) {
-            throw new IOException("Save file fail!" );
+            throw new IOException("Save file fail!");
         }
-       ProductEntity productEntity = updateEntity(json);
-       productEntity.setImages(String.join(",", filesName));
-       ProductEntity p = productDao.save(productEntity);
+        ProductEntity productEntity = updateEntity(json);
+        productEntity.setImages(String.join(",", filesName));
+        productDao.save(productEntity);
         log.info("### End Add Product By Id ###");
         log.info("##########################################");
         return new ResultBean(Constants.STATUS_201, Constants.MSG_OK);
     }
-    
+
     /**
      * Update product.
      *
@@ -168,16 +170,21 @@ public class ProductServiceImpl implements ProductService{
         log.info("### Start Update Product By Id ###");
         JsonObject jsonObj = DataUtil.getJsonObject(json);
         Integer id = jsonObj.get("id").getAsInt();
-        if(!productDao.existsById(id)) {
+        Optional<ProductEntity> productOp = productDao.findById(id);
+        if (!productOp.isPresent()) {
             throw new Exception("Product Id " + id + " does not exist!");
         }
+        ProductEntity productDb = productOp.get();
         ProductEntity productEntity = updateEntity(json);
+        if(Objects.isNull(files)) {
+            productEntity.setImages(productDb.getImages());
+        }
         productDao.save(productEntity);
         log.info("### End Update Product By Id ###");
         log.info("##########################################");
         return new ResultBean(Constants.STATUS_OK, Constants.MSG_OK);
     }
-    
+
     /**
      * Update entity.
      *
@@ -185,7 +192,7 @@ public class ProductServiceImpl implements ProductService{
      * @return the product entity
      * @throws Exception the exception
      */
-    private ProductEntity updateEntity(String json) throws Exception{
+    private ProductEntity updateEntity(String json) throws Exception {
         return mapper.readValue(json, ProductEntity.class);
     }
 }

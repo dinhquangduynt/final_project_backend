@@ -14,5 +14,9 @@ public interface UserService {
     public ResultBean addUser(UserEntity user) throws Exception;
 
     public ResultBean deleteUserbyId(Integer id) throws Exception;
+    
+    public ResultBean getUserByUsername(String username) throws Exception;
+    
+    public boolean isExitsUserName(String userName) throws Exception;
 
 }

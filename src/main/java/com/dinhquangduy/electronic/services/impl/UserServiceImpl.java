@@ -10,9 +10,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.dinhquangduy.electronic.bean.ResultBean;
+import com.dinhquangduy.electronic.bean.entity.RoleEntity;
 import com.dinhquangduy.electronic.bean.entity.UserEntity;
 import com.dinhquangduy.electronic.bean.response.UserResponse;
 import com.dinhquangduy.electronic.config.LogExecutionTime;
+import com.dinhquangduy.electronic.dao.RoleDao;
 import com.dinhquangduy.electronic.dao.UserDao;
 import com.dinhquangduy.electronic.services.UserService;
 import com.dinhquangduy.electronic.utils.Constants;
@@ -27,6 +29,9 @@ public class UserServiceImpl implements UserService{
     /** The user dao. */
     @Autowired
     private UserDao userDao;
+    
+    @Autowired
+    private RoleDao roleDao;
     
     /** The model mapper. */
     private ModelMapper modelMapper = new ModelMapper();
@@ -90,6 +95,8 @@ public class UserServiceImpl implements UserService{
      */
     @Override
     public ResultBean addUser(UserEntity user) throws Exception {
+        //RoleEntity role = roleDao.findById(2).get();
+        //user.setRoles(role);
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         UserEntity entity = userDao.save(user);
         return new ResultBean(entity, Constants.STATUS_OK, Constants.MSG_OK);
@@ -109,5 +116,20 @@ public class UserServiceImpl implements UserService{
         }
         userDao.deleteById(id);
         return new ResultBean(Constants.STATUS_OK, Constants.MSG_OK);
+    }
+
+    @Override
+    public boolean isExitsUserName(String userName) throws Exception {
+        return userDao.findByUserName(userName).isPresent();
+    }
+
+    @Override
+    public ResultBean getUserByUsername(String username) throws Exception {
+        Optional<UserEntity> userOp = userDao.findByUserName(username);
+        if(!userOp.isPresent()) {
+            throw new Exception("User by username " + username + " does not exist!");
+        }
+        UserEntity user = userOp.get();
+        return new ResultBean(user, Constants.STATUS_OK, Constants.MSG_OK);
     }
 }
