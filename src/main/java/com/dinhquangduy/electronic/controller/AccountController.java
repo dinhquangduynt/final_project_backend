@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.dinhquangduy.electronic.bean.ResultBean;
 import com.dinhquangduy.electronic.bean.entity.UserEntity;
 import com.dinhquangduy.electronic.bean.response.AuthenTokenResponse;
+import com.dinhquangduy.electronic.config.CustomUserDetailService;
 import com.dinhquangduy.electronic.config.JwtTokenProvider;
 import com.dinhquangduy.electronic.services.UserService;
 import com.dinhquangduy.electronic.utils.Constants;
@@ -33,6 +35,10 @@ public class AccountController {
     private JwtTokenProvider tokenProvider;
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private CustomUserDetailService customUserDetailService;
+
 
     @RequestMapping(value = "/getAll", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<ResultBean> getAllUsers() throws Exception {
@@ -110,20 +116,21 @@ public class AccountController {
     @RequestMapping(value = "/login", method = RequestMethod.POST, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<?> login(@RequestParam String userName, @RequestParam String password) throws Exception {
         String jwt = null;
+        UserDetails user = null;
         if (userService.isExitsUserName(userName)) {
-            System.out.println("aaaa");
             try {
+                
                 Authentication authentication = authenticationManager
                         .authenticate(new UsernamePasswordAuthenticationToken(userName, password));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                if (authentication != null) {
-                    jwt = tokenProvider.generateToken(authentication);
-                }
+                
+                user = customUserDetailService.loadUserByUsername(userName);
+                jwt = tokenProvider.generateToken(authentication);
 
             } catch (Exception e) {
                 throw new Exception(e.getCause());
             }
         }
-        return ResponseEntity.ok(new AuthenTokenResponse(jwt));
+        return ResponseEntity.ok(new AuthenTokenResponse(jwt, user.getUsername(), user.getAuthorities()));
     }
 }

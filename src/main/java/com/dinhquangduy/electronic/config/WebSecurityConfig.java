@@ -1,7 +1,6 @@
 package com.dinhquangduy.electronic.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     CustomUserDetailService customUserDetailService;
-
 
     @Bean
     public JWTAuthenticationFilter jwtAuthenticationFilter() {
@@ -47,22 +45,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests().antMatchers("/").permitAll();
-        	    http
-                    .cors()
-                            .and()
-                    .csrf()
-                            .disable()
-                    .exceptionHandling()
-                            .and()
-                    .sessionManagement()
-                            .and()
-                    .authorizeRequests()
-                            .antMatchers()
-                .permitAll()
-             .antMatchers("/api/account/login")
-                    .permitAll()
-             .anyRequest()
-                    .authenticated();
+        http.cors().and().csrf().disable().authorizeRequests().antMatchers("/api/account/login").permitAll().antMatchers("/api/account/register").permitAll()
+                .anyRequest().authenticated();
     }
+
+    //    @Override
+    //    public void addCorsMappings(CorsRegistry registry) {
+    //        registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH").allowedOrigins("*").allowedHeaders("*").allowCredentials(true);
+    //    }
 }
