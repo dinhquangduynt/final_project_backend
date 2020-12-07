@@ -2,12 +2,17 @@ package com.dinhquangduy.electronic.bean.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -35,9 +40,9 @@ public class ProductEntity extends CommonEntity implements Serializable{
     @Column(name = "category_id")
     private Integer categoryId;
     
-    /** The image. */
-    @Column(name = "images")
-    private String images;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "parent_id")
+    private Set<ImageEntity> images;
     
     /** The price. */
     @Column(name = "price")
@@ -79,6 +84,32 @@ public class ProductEntity extends CommonEntity implements Serializable{
     /** The rating. */
     @Column(name = "rating")
     private Float rating ;
+    
+    /** The rating. */
+    @Column(name = "new_price")
+    private Float newPrice ;
+    
+    /** The rating. */
+    @Column(name = "old_price")
+    private Float oldPrice ;
+    
+    
+
+    public Float getNewPrice() {
+        return newPrice;
+    }
+
+    public void setNewPrice(Float newPrice) {
+        this.newPrice = newPrice;
+    }
+
+    public Float getOldPrice() {
+        return oldPrice;
+    }
+
+    public void setOldPrice(Float oldPrice) {
+        this.oldPrice = oldPrice;
+    }
 
     /**
      * Gets the id.
@@ -152,21 +183,12 @@ public class ProductEntity extends CommonEntity implements Serializable{
         this.categoryId = categoryId;
     }
 
-    /**
-     * Gets the image.
-     *
-     * @return the image
-     */
-    public String getImages() {
+    
+    public Set<ImageEntity> getImages() {
         return images;
     }
 
-    /**
-     * Sets the image.
-     *
-     * @param image the new image
-     */
-    public void setImages(String images) {
+    public void setImages(Set<ImageEntity> images) {
         this.images = images;
     }
 

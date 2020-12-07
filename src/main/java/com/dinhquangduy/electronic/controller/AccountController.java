@@ -43,6 +43,7 @@ public class AccountController {
     @RequestMapping(value = "/getAll", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<ResultBean> getAllUsers() throws Exception {
         ResultBean resultBean = null;
+       
         try {
             resultBean = userService.getAll();
         } catch (Exception e) {

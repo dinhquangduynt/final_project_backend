@@ -27,12 +27,12 @@ public class ImageStorageServiceImpl implements ImageStorageService {
 
     @Override
     public String save(MultipartFile file) throws IOException {
-        long currentTime = System.currentTimeMillis();
-        String fileName = file.getOriginalFilename().split("\\.")[0];
-        String extension = "." + file.getOriginalFilename().split("\\.")[1];
-        String fileStorePath = fileName + currentTime + extension;
-        Files.copy(file.getInputStream(), dir.resolve(fileStorePath));
-        return fileStorePath;
+       // long currentTime = System.currentTimeMillis();
+        String fileName = file.getOriginalFilename();
+//        String extension = "." + file.getOriginalFilename()
+//        String fileStorePath = fileName + currentTime + extension;
+        Files.copy(file.getInputStream(), dir.resolve(fileName));
+        return fileName;
     }
 
     @Override

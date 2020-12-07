@@ -29,27 +29,22 @@ public class ContactEntity extends CommonEntity implements Serializable {
 
     /** The name. */
     @Column(name = "name")
-    @JsonProperty("name")
     private String name;
 
     /** The name. */
     @Column(name = "phone")
-    @JsonProperty("phone")
     private String phone;
 
     /** The name. */
     @Column(name = "email")
-    @JsonProperty("email")
     private String email;
 
     /** The name. */
     @Column(name = "website")
-    @JsonProperty("website")
     private String website;
 
     /** The name. */
     @Column(name = "address")
-    @JsonProperty("address")
     private String address;
 
     /**

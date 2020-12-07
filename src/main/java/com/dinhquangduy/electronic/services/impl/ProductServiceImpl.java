@@ -2,21 +2,28 @@ package com.dinhquangduy.electronic.services.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dinhquangduy.electronic.bean.ResultBean;
+import com.dinhquangduy.electronic.bean.entity.ImageEntity;
 import com.dinhquangduy.electronic.bean.entity.ProductEntity;
 import com.dinhquangduy.electronic.bean.response.ProductResponse;
 import com.dinhquangduy.electronic.config.LogExecutionTime;
+import com.dinhquangduy.electronic.dao.ImageDao;
 import com.dinhquangduy.electronic.dao.ProductDao;
 import com.dinhquangduy.electronic.services.ImageStorageService;
 import com.dinhquangduy.electronic.services.ProductService;
@@ -30,6 +37,7 @@ import com.google.gson.JsonObject;
  */
 @Service
 @LogExecutionTime
+@Transactional
 public class ProductServiceImpl implements ProductService {
 
     /** The Constant log. */
@@ -44,6 +52,9 @@ public class ProductServiceImpl implements ProductService {
     /** The product dao. */
     @Autowired
     private ProductDao productDao;
+    
+    @Autowired
+    private ImageDao imageDao;
 
     /** The image storage service. */
     @Autowired
@@ -100,8 +111,11 @@ public class ProductServiceImpl implements ProductService {
         log.info("##                                      ##");
         log.info("##########################################");
         log.info("### Start Get List Product By Id ###");
+        Authentication authe = SecurityContextHolder.getContext().getAuthentication();
         ProductEntity product = productDao.findById(id).get();
-        product.setViewCount(product.getViewCount() + 1);
+        if(!authe.getAuthorities().stream().filter(res -> "ROLE_ADMIN".equals(res)).findFirst().isPresent()) {
+            product.setViewCount(product.getViewCount() + 1);
+        }
         productDao.save(product);
         log.info("### End Get List Product By Id ###");
         log.info("##########################################");
@@ -139,17 +153,23 @@ public class ProductServiceImpl implements ProductService {
         log.info("##                                      ##");
         log.info("##########################################");
         log.info("### Start Add Product By Id ###");
-        List<String> filesName = new ArrayList<String>();
+        Set<ImageEntity> images = new HashSet<ImageEntity>();
+        ProductEntity productEntity = updateEntity(json);
+        Integer maxId = productDao.getMaxId();
         try {
             for (MultipartFile file : files) {
                 String fileName = imageStorageService.save(file);
-                filesName.add(fileName);
+                ImageEntity image = new ImageEntity();
+                image.setFileName(fileName);
+                image.setParentId(maxId + 1);
+                image.setType(Constants.TYPE_PRODUCT);
+                imageDao.save(image);
             }
         } catch (Exception e) {
             throw new IOException("Save file fail!");
         }
-        ProductEntity productEntity = updateEntity(json);
-        productEntity.setImages(String.join(",", filesName));
+       
+        productEntity.setImages(images);
         productDao.save(productEntity);
         log.info("### End Add Product By Id ###");
         log.info("##########################################");

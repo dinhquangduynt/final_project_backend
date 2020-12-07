@@ -14,4 +14,8 @@ public class Constants {
     public static final String MSG_OK = "Processed successfully";
     public static final String MSG_DELETE_OK = "Delete successfully";
     
+    public static final String TYPE_PRODUCT = "product";
+    public static final String TYPE_BANNER = "banner";
+    public static final String TYPE_USER = "user";
+    
 }
