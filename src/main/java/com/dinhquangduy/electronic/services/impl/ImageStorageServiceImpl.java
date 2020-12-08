@@ -1,5 +1,6 @@
 package com.dinhquangduy.electronic.services.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,7 +32,11 @@ public class ImageStorageServiceImpl implements ImageStorageService {
         String fileName = file.getOriginalFilename();
 //        String extension = "." + file.getOriginalFilename()
 //        String fileStorePath = fileName + currentTime + extension;
-        Files.copy(file.getInputStream(), dir.resolve(fileName));
+        File f = new File(dir.toString() + "/" + file.getOriginalFilename());
+        if(!f.exists()){
+            Files.copy(file.getInputStream(), dir.resolve(fileName));
+        }
+
         return fileName;
     }
 

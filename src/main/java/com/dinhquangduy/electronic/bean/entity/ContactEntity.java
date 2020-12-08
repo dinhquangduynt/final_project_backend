@@ -40,13 +40,11 @@ public class ContactEntity extends CommonEntity implements Serializable {
     private String email;
 
     /** The name. */
-    @Column(name = "website")
-    private String website;
-
-    /** The name. */
     @Column(name = "address")
     private String address;
 
+    @Column(name = "message")
+    private String message;
     /**
      * Gets the id.
      *
@@ -120,24 +118,6 @@ public class ContactEntity extends CommonEntity implements Serializable {
     }
 
     /**
-     * Gets the website.
-     *
-     * @return the website
-     */
-    public String getWebsite() {
-        return website;
-    }
-
-    /**
-     * Sets the website.
-     *
-     * @param website the new website
-     */
-    public void setWebsite(String website) {
-        this.website = website;
-    }
-
-    /**
      * Gets the address.
      *
      * @return the address
@@ -153,5 +133,13 @@ public class ContactEntity extends CommonEntity implements Serializable {
      */
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

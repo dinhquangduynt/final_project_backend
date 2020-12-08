@@ -75,6 +75,19 @@ public class OrderController {
         return new ResponseEntity<ResultBean>(resultBean, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/getOrderById/{id}", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<ResultBean> getOrderByOrderId(@PathVariable Integer id) throws Exception {
+        ResultBean resultBean = null;
+        try {
+            resultBean = orderService.getOrderById(id);
+        } catch (Exception e) {
+            resultBean = new ResultBean(Constants.STATUS_BAD_REQUEST, e.getMessage());
+            return new ResponseEntity<ResultBean>(resultBean, HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<ResultBean>(resultBean, HttpStatus.OK);
+    }
+
     /**
      * Gets the products by cate id.
      *

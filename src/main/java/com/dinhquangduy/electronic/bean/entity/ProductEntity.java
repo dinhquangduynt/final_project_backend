@@ -62,7 +62,7 @@ public class ProductEntity extends CommonEntity implements Serializable{
     private String content;
     
     /** The hot flg. */
-    @Column(name = "hoFlg")
+    @Column(name = "hotFlg")
     private Boolean hotFlg;
     
     /** The home flg. */
