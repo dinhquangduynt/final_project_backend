@@ -44,7 +44,7 @@ public interface OrderService {
      * @return the result bean
      * @throws Exception the exception
      */
-    public ResultBean addOrder(OrderEntity entity, List<OrderDetailEntity> orderDetails) throws Exception;
+    public ResultBean addOrder(String json) throws Exception;
     
     /**
      * Update order.

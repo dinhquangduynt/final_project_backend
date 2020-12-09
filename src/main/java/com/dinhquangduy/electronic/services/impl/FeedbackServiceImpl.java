@@ -12,6 +12,7 @@ import com.dinhquangduy.electronic.config.LogExecutionTime;
 import com.dinhquangduy.electronic.dao.FeedbackDao;
 import com.dinhquangduy.electronic.services.FeedbackService;
 import com.dinhquangduy.electronic.utils.Constants;
+import com.dinhquangduy.electronic.utils.DataUtil;
 
 @Service
 @LogExecutionTime
@@ -47,6 +48,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         if(!feedbackOp.isPresent()) {
             throw new Exception("Feedback by id " + entity.getId() + " does not exist!");
         }
+       
         FeedbackEntity feedback = feedbackDao.save(entity);
         return new ResultBean(feedback, Constants.STATUS_OK, Constants.MSG_OK);
     }

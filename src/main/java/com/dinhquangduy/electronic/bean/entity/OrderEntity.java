@@ -1,66 +1,86 @@
 package com.dinhquangduy.electronic.bean.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Collection;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "orders")
-public class OrderEntity extends CommonEntity implements Serializable{
+public class OrderEntity extends CommonEntity implements Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     @JsonProperty("id")
     private Integer id;
-    
+
     @Column(name = "customer_id")
-    @JsonProperty("customer_id")
     private Integer customerId;
+
+    @Column(name = "total_price")
+    private BigDecimal totalPrice = new BigDecimal(0);
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Collection<OrderDetailEntity> orderDetails;
     
+    
+
+    public Collection<OrderDetailEntity> getOrderDetails() {
+        return orderDetails;
+    }
+
+    public void setOrderDetails(Collection<OrderDetailEntity> orderDetails) {
+        this.orderDetails = orderDetails;
+    }
+
     @Column(name = "payment_method")
-    @JsonProperty("payment_method")
     private String paymentMethod;
 
-    
     @Column(name = "payment_status")
-    @JsonProperty("payment_status")
     private String paymentStatus;
-    
+
     @Column(name = "status")
-    @JsonProperty("status")
     private boolean status;
-    
+
     @Column(name = "customer_name")
-    @JsonProperty("customer_name")
     private String customerName;
-    
+
     @Column(name = "customer_address")
-    @JsonProperty("customer_adress")
     private String customerAddress;
-    
+
     @Column(name = "customer_email")
-    @JsonProperty("customer_email")
     private String customerEmail;
-    
+
     @Column(name = "customer_phone")
-    @JsonProperty("customer_phone")
     private String customerPhone;
-    
+
     @Column(name = "customer_message")
-    @JsonProperty("customer_message")
     private String customerMassage;
 
     public Integer getId() {

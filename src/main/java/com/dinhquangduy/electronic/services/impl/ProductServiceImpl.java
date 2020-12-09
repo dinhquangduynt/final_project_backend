@@ -156,6 +156,7 @@ public class ProductServiceImpl implements ProductService {
         Set<ImageEntity> images = new HashSet<ImageEntity>();
         ProductEntity productEntity = updateEntity(json);
         Integer maxId = productDao.getMaxId();
+        maxId = !Objects.isNull(productDao.getMaxId()) ? maxId : 0;
         try {
             for (MultipartFile file : files) {
                 String fileName = imageStorageService.save(file);

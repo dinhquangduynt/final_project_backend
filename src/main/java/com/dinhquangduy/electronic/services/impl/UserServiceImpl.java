@@ -1,11 +1,14 @@
 package com.dinhquangduy.electronic.services.impl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +21,7 @@ import com.dinhquangduy.electronic.dao.RoleDao;
 import com.dinhquangduy.electronic.dao.UserDao;
 import com.dinhquangduy.electronic.services.UserService;
 import com.dinhquangduy.electronic.utils.Constants;
+import com.dinhquangduy.electronic.utils.DataUtil;
 
 /**
  * The Class UserServiceImpl.
@@ -35,6 +39,7 @@ public class UserServiceImpl implements UserService{
     
     /** The model mapper. */
     private ModelMapper modelMapper = new ModelMapper();
+    
 
     /**
      * Gets the all.
@@ -95,8 +100,8 @@ public class UserServiceImpl implements UserService{
      */
     @Override
     public ResultBean addUser(UserEntity user) throws Exception {
-        //RoleEntity role = roleDao.findById(2).get();
-        //user.setRoles(role);
+        Set<RoleEntity> roles = new HashSet<>(roleDao.findAllById(user.getRoles().stream().map(rs->rs.getIdRole()).collect(Collectors.toSet())));
+        user.setRoles(roles);
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         UserEntity entity = userDao.save(user);
         return new ResultBean(entity, Constants.STATUS_OK, Constants.MSG_OK);
@@ -131,5 +136,13 @@ public class UserServiceImpl implements UserService{
         }
         UserEntity user = userOp.get();
         return new ResultBean(user, Constants.STATUS_OK, Constants.MSG_OK);
+    }
+
+    @Override
+    public ResultBean resetPass(String email) throws Exception {
+        String subject = "Mật khẩu mới";
+        String msg = "Mật khẩu mới của bạn đã được tạo tự động: " + DataUtil.randomPassword() +"<br>";
+        DataUtil.sendmail(email, subject, msg);
+        return new ResultBean(Constants.STATUS_OK, Constants.MSG_OK);
     }
 }

@@ -18,5 +18,7 @@ public interface UserService {
     public ResultBean getUserByUsername(String username) throws Exception;
     
     public boolean isExitsUserName(String userName) throws Exception;
+    
+    public ResultBean resetPass(String email) throws Exception;
 
 }

@@ -1,5 +1,7 @@
 package com.dinhquangduy.electronic.services.impl;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +16,9 @@ import com.dinhquangduy.electronic.dao.OrderDao;
 import com.dinhquangduy.electronic.dao.OrderDetailDao;
 import com.dinhquangduy.electronic.services.OrderService;
 import com.dinhquangduy.electronic.utils.Constants;
+import com.dinhquangduy.electronic.utils.DataUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
 
 /**
  * The Class OrderServiceImpl.
@@ -28,6 +33,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderDetailDao orderDetailDao;
+    
+    private ObjectMapper mapper = new ObjectMapper();
 
     /**
      * Gets the all.
@@ -79,13 +86,12 @@ public class OrderServiceImpl implements OrderService {
      * @throws Exception the exception
      */
     @Override
-    public ResultBean addOrder(OrderEntity order, List<OrderDetailEntity> orderDetails) throws Exception {
-        orderDao.save(order);
-        for (OrderDetailEntity orderDetail : orderDetails) {
-            orderDetail.setOrderId(order.getId());
-            orderDetailDao.save(orderDetail);
-        }
-        return new ResultBean(Constants.STATUS_201, Constants.MSG_OK);
+    public ResultBean addOrder(String json) throws Exception {
+        
+       OrderEntity order = updateOrderEntity(json);
+       order.getOrderDetails().forEach(res -> res.setOrder(order));
+       OrderEntity orderSave = orderDao.save(order);
+        return new ResultBean(orderSave,Constants.STATUS_201, Constants.MSG_OK);
     }
 
     /**
@@ -123,6 +129,14 @@ public class OrderServiceImpl implements OrderService {
         });
         orderDao.deleteById(id);
         return new ResultBean(Constants.STATUS_OK, Constants.MSG_OK);
+    }
+    
+    private OrderEntity updateOrderEntity(String json) throws Exception {
+        return mapper.readValue(json, OrderEntity.class);
+    }
+    
+    private OrderDetailEntity updateOrderDetailEntity(String json) throws Exception {
+        return mapper.readValue(json, OrderDetailEntity.class);
     }
 
 }

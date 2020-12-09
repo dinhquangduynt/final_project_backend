@@ -18,4 +18,9 @@ public class Constants {
     public static final String TYPE_BANNER = "banner";
     public static final String TYPE_USER = "user";
     
+    public static final String EMAIL = "manh3698@gmail.com";
+    public static final String PASSWORD = "nvm25251325";   
+    
+    public static final String rander = "abcd1234!@#$%^&*mhbyuoshDMhAESKOJQSD761823123";
+    
 }

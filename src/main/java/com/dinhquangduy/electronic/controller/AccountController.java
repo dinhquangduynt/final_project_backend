@@ -134,4 +134,18 @@ public class AccountController {
         }
         return ResponseEntity.ok(new AuthenTokenResponse(jwt, user.getUsername(), user.getAuthorities()));
     }
+    
+    
+    @RequestMapping(value = "/resetPass", method = RequestMethod.POST, produces = { MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<ResultBean> resetPass(String email) throws Exception {
+        ResultBean resultBean = null;
+        try {
+            resultBean = userService.resetPass(email);
+        } catch (Exception e) {
+            resultBean = new ResultBean(Constants.STATUS_BAD_REQUEST, e.getMessage());
+            return new ResponseEntity<ResultBean>(resultBean, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<ResultBean>(resultBean, HttpStatus.OK);
+    }
+
 }
