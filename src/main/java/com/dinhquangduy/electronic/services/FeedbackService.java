@@ -16,6 +16,8 @@ public interface FeedbackService {
      */
     public ResultBean getById(Integer id) throws Exception;
 
+    
+    public ResultBean getByProductId(Integer id) throws Exception;
     /**
      * Adds the.
      *

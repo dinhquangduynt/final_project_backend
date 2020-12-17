@@ -35,7 +35,7 @@ public class ProductCategoryController {
      * @return the all products cate
      * @throws Exception the exception
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    //@PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/getAll", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<ResultBean> getAllProductsCate() throws Exception {
         ResultBean resultBean = null;

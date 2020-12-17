@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.dinhquangduy.electronic.bean.ResultBean;
 import com.dinhquangduy.electronic.bean.entity.ProductCategoryEntity;
 import com.dinhquangduy.electronic.dao.ProductCategoryDao;
+import com.dinhquangduy.electronic.dao.ProductDao;
 import com.dinhquangduy.electronic.services.ImageStorageService;
 import com.dinhquangduy.electronic.services.ProductCategoryService;
 import com.dinhquangduy.electronic.utils.Constants;
@@ -31,6 +32,9 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     @Autowired
     private ProductCategoryDao productCateDao;
+    
+    @Autowired
+    private ProductDao productDao;
     @Autowired
     private ImageStorageService imageStorageService;
 
@@ -48,6 +52,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     @Override
     public ResultBean deleteById(Integer id) throws Exception {
+        productDao.deleteAllByIdCate(id);
         productCateDao.deleteById(id);
         return new ResultBean(Constants.STATUS_OK, Constants.MSG_OK);
     }

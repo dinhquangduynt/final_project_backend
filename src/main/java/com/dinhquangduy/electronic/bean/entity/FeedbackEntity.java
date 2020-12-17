@@ -43,11 +43,24 @@ public class FeedbackEntity extends CommonEntity implements Serializable {
 
     /** The product id. */
     @Column(name = "product_id")
-    private String productId;
+    private Integer productId;
 
     /** The rate. */
     @Column(name = "rate")
     private Float rate;
+    
+    @Column(name = "customer_name")
+    private String customer_name;
+    
+    
+
+    public String getCustomer_name() {
+        return customer_name;
+    }
+
+    public void setCustomer_name(String customer_name) {
+        this.customer_name = customer_name;
+    }
 
     /**
      * Gets the id.
@@ -144,7 +157,7 @@ public class FeedbackEntity extends CommonEntity implements Serializable {
      *
      * @return the product id
      */
-    public String getProductId() {
+    public Integer getProductId() {
         return productId;
     }
 
@@ -153,7 +166,7 @@ public class FeedbackEntity extends CommonEntity implements Serializable {
      *
      * @param productId the new product id
      */
-    public void setProductId(String productId) {
+    public void setProductId(Integer productId) {
         this.productId = productId;
     }
 

@@ -105,7 +105,7 @@ public class AccountController {
     public ResponseEntity<ResultBean> addUser(@RequestBody UserEntity user) throws Exception {
         ResultBean resultBean = null;
         try {
-
+            
             resultBean = userService.addUser(user);
         } catch (Exception e) {
             resultBean = new ResultBean(Constants.STATUS_BAD_REQUEST, e.getMessage());

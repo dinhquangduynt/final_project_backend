@@ -63,4 +63,10 @@ public class FeedbackServiceImpl implements FeedbackService {
         return new ResultBean(Constants.STATUS_OK, Constants.MSG_DELETE_OK);
     }
 
+    @Override
+    public ResultBean getByProductId(Integer id) throws Exception {
+        List<FeedbackEntity> entities = feedbackDao.findByProductId(id);
+        return new ResultBean(entities, Constants.STATUS_OK, Constants.MSG_OK);
+    }
+
 }

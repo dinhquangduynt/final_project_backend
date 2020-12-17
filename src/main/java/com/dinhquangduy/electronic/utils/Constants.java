@@ -23,4 +23,6 @@ public class Constants {
     
     public static final String rander = "abcd1234!@#$%^&*mhbyuoshDMhAESKOJQSD761823123";
     
+    public static final String URL_FILTER = "http://localhost:5000/recommend-system/id-post=";
+    
 }

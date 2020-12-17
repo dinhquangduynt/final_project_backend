@@ -6,14 +6,19 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import com.dinhquangduy.electronic.bean.ResultBean;
 import com.dinhquangduy.electronic.bean.entity.OrderDetailEntity;
 import com.dinhquangduy.electronic.bean.entity.OrderEntity;
+import com.dinhquangduy.electronic.bean.entity.UserEntity;
 import com.dinhquangduy.electronic.config.LogExecutionTime;
 import com.dinhquangduy.electronic.dao.OrderDao;
 import com.dinhquangduy.electronic.dao.OrderDetailDao;
+import com.dinhquangduy.electronic.dao.UserDao;
 import com.dinhquangduy.electronic.services.OrderService;
 import com.dinhquangduy.electronic.utils.Constants;
 import com.dinhquangduy.electronic.utils.DataUtil;
@@ -35,6 +40,9 @@ public class OrderServiceImpl implements OrderService {
     private OrderDetailDao orderDetailDao;
     
     private ObjectMapper mapper = new ObjectMapper();
+    
+    @Autowired
+    private UserDao userDao;
 
     /**
      * Gets the all.
@@ -87,8 +95,13 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public ResultBean addOrder(String json) throws Exception {
-        
        OrderEntity order = updateOrderEntity(json);
+       Authentication authe = SecurityContextHolder.getContext().getAuthentication(); 
+       if((!"anonymousUser".equals(authe.getPrincipal()))) {
+           User prin = (User) authe.getPrincipal();
+           UserEntity user = userDao.findByUserName(prin.getUsername()).get();
+           order.setCustomerId(user.getId());
+       }
        order.getOrderDetails().forEach(res -> res.setOrder(order));
        OrderEntity orderSave = orderDao.save(order);
         return new ResultBean(orderSave,Constants.STATUS_201, Constants.MSG_OK);

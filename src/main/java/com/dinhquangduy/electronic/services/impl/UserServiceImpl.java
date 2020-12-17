@@ -100,6 +100,10 @@ public class UserServiceImpl implements UserService{
      */
     @Override
     public ResultBean addUser(UserEntity user) throws Exception {
+        Optional<UserEntity> userDb = userDao.findByUserName(user.getUserName());
+        if (userDb.isPresent()) {
+            throw new Exception("User by user name " + user.getUserName() + " have been exist!");
+        }
         Set<RoleEntity> roles = new HashSet<>(roleDao.findAllById(user.getRoles().stream().map(rs->rs.getIdRole()).collect(Collectors.toSet())));
         user.setRoles(roles);
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));

@@ -37,27 +37,7 @@ public class OrderEntity extends CommonEntity implements Serializable {
 
     @Column(name = "total_price")
     private BigDecimal totalPrice = new BigDecimal(0);
-
-    public BigDecimal getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(BigDecimal totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Collection<OrderDetailEntity> orderDetails;
-    
-    
-
-    public Collection<OrderDetailEntity> getOrderDetails() {
-        return orderDetails;
-    }
-
-    public void setOrderDetails(Collection<OrderDetailEntity> orderDetails) {
-        this.orderDetails = orderDetails;
-    }
+   
 
     @Column(name = "payment_method")
     private String paymentMethod;
@@ -83,6 +63,26 @@ public class OrderEntity extends CommonEntity implements Serializable {
     @Column(name = "customer_message")
     private String customerMassage;
 
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Collection<OrderDetailEntity> orderDetails;
+    
+    
+
+    public Collection<OrderDetailEntity> getOrderDetails() {
+        return orderDetails;
+    }
+
+    public void setOrderDetails(Collection<OrderDetailEntity> orderDetails) {
+        this.orderDetails = orderDetails;
+    }
     public Integer getId() {
         return id;
     }

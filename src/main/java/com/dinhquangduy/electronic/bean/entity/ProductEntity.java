@@ -79,7 +79,7 @@ public class ProductEntity extends CommonEntity implements Serializable{
     
     /** The view count. */
     @Column(name = "view_count")
-    private Integer viewCount = 0 ;
+    private Integer viewCount = new Integer(0) ;
     
     /** The rating. */
     @Column(name = "rating")
