@@ -177,7 +177,7 @@ public class OrderController {
      * @return the response entity
      * @throws Exception the exception
      */
-    @RequestMapping(value = "/update", method = RequestMethod.POST, produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = "/update", method = RequestMethod.PUT, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<ResultBean> update(@RequestBody OrderEntity json) throws Exception {
         ResultBean resultBean = null;
         try {
