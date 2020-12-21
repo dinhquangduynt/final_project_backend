@@ -127,11 +127,13 @@ public class AccountController {
                 
                 user = customUserDetailService.loadUserByUsername(userName);
                 jwt = tokenProvider.generateToken(authentication);
+                
 
             } catch (Exception e) {
                 throw new Exception(e.getCause());
             }
         }
+        System.out.println(jwt);
         return ResponseEntity.ok(new AuthenTokenResponse(jwt, user.getUsername(), user.getAuthorities()));
     }
     
